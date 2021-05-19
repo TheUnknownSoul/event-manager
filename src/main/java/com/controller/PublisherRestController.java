@@ -23,7 +23,6 @@ public class PublisherRestController extends HttpServlet {
     @Autowired
     EventManagerService eventManagerService;
 
-
     @RequestMapping("/registration")
     public void registerPublisher( String name) {
         eventManagerService.register(name);
@@ -32,10 +31,9 @@ public class PublisherRestController extends HttpServlet {
     @PostMapping("/send")
     public void sendPost(HttpServletRequest request, HttpServletResponse response, String message) throws IOException {
         request.getParameterValues(String.valueOf(message));
-        System.out.println(message);
         rabbitMQService.sendMessage(message);
         eventManagerService.saveMessageInDatabase(message);
-        response.getWriter().println("Message has been sent");
+        response.getWriter().println("Message \" " + message + " \" has been sent");
     }
 
     @GetMapping("/publishers")

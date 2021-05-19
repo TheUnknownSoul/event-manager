@@ -33,7 +33,7 @@ public class RabbitMQService  {
     @RabbitListener(queues = "${spring.rabbitmq.template.default-receive-queue}") // need to define queue
     public void receiveMessage(String message) {
         log.info("Received message '{}'", message);
-        System.out.println("received:" + message);
+        System.out.println("Message " + message + " has been received" );
 
     }
 

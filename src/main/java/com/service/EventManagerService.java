@@ -19,6 +19,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,9 +81,12 @@ public class EventManagerService {
 
 //        Bson bson = new BsonDocument();
 //        bson.toBsonDocument(message);
+        Date in = new Date();
+        LocalDateTime ldt = LocalDateTime.ofInstant(in.toInstant(), ZoneId.systemDefault());
+        Date out = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
         Document document = new Document();
-        document.append("message",message);
-        System.out.println(LocalDateTime.now());
+        document.append("message:",message).append("date:", out);
+
         mongoTemplate.insert(document,"events");
     }
 //им нужно регистрироваться ? или просто показать подписчиков из очереди
