@@ -1,24 +1,24 @@
 package com.controller;
 
-import com.model.User;
+import com.model.NoSuchPublisherException;
 import com.service.EventManagerService;
-import com.service.RabbitMQService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/publisher")
 public class PublisherRestController extends HttpServlet {
-    @Autowired
-    RabbitMQService rabbitMQService;
+
+//    @Autowired
+//    RabbitMQService rabbitMQService;
     @Autowired
     EventManagerService eventManagerService;
+    private static final String SUCCESS_MESSAGE = "Message has been successfully  sent ";
 
     @RequestMapping("/registration")
     public void registerPublisher( String name) {
@@ -26,20 +26,17 @@ public class PublisherRestController extends HttpServlet {
     }
 
     @PostMapping("/{name}/send")
-    public void sendPost(HttpServletRequest request, HttpServletResponse response, String message,@PathVariable String name) throws IOException {
-        request.getParameterValues(String.valueOf(message));
-        if (eventManagerService.isPublisherExists(name)){
-            rabbitMQService.sendMessage(message);
-            eventManagerService.saveMessageInDatabase(message, name);
-            response.getWriter().println("Message \" " + message + " \" has been sent" + " in " + name );
+    public String sendPost( String message,@PathVariable String name) throws NoSuchPublisherException {
 
+        if (eventManagerService.sendPost(message, name)){
+
+            return SUCCESS_MESSAGE + "\" " +  message + "\"" + " in  " +  name;
         }
-            response.getWriter().println("No such publisher has been founded");
+
+        throw new NoSuchPublisherException("No such publisher");
+
 
     }
 
-    @GetMapping("/publishers")
-    public List<User> showAllPublishers() {
-        return eventManagerService.showAllPublishers();
-    }
+
 }

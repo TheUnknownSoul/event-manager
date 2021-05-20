@@ -1,6 +1,7 @@
 package com.service;
 
 
+import com.config.RabbitMQConfig;
 import com.model.Event;
 import com.model.Role;
 import com.model.User;
@@ -43,18 +44,12 @@ public class EventManagerService {
     @Autowired
     MongoTemplate mongoTemplate;
 
-
+    // code for editing rabbitmq template and settings routing key, queue
 //    @Autowired
 //    private RabbitMQService rabbitMQService;
-//    @Autowired
-//    private RabbitMQConfig rabbitMQConfig;
-//
-//    public static final String FIRST_QUEUE_APP_A = "FIRST_QUEUE_APP_A";
-//    public static final String SECOND_QUEUE_APP_A = "SECOND_QUEUE_APP_A";
-//    public static final String FIRST_QUEUE_APP_B = "FIRST_QUEUE_APP_B";
-//    public static final String SECOND_QUEUE_APP_B = "SECOND_QUEUE_APP_B";
-//    public static final String FIRST_QUEUE_APP_C = "FIRST_QUEUE_APP_C";
-//    public static final String SECOND_QUEUE_APP_C = "SECOND_QUEUE_APP_C";
+    @Autowired
+    private RabbitMQConfig rabbitMQConfig;
+
 
     public void register(String name) {
 
@@ -66,6 +61,7 @@ public class EventManagerService {
     }
 
     public List<Event> subscribe(String publisherName) {
+        //need to create queue
         Optional<User> optionalUser = userRepository.findByName(publisherName);
         ArrayList<Event> optionalEvent = eventRepository.findByPublisher(publisherName);
         if (optionalUser.isPresent()) {
@@ -76,6 +72,20 @@ public class EventManagerService {
         return null;
     }
 
+    public void receive() {
+
+    }
+
+    public boolean sendPost(String message, String publisherName) {
+    //message = null
+        if (isPublisherExists(publisherName)) {
+//            rabbitMQService.sendMessage(message);
+            saveMessageInDatabase(message, publisherName);
+            rabbitTemplate.convertAndSend(rabbitMQConfig.getDefaultExchange() + publisherName, rabbitMQConfig.getDefaultRoutingKey(), message);
+            return true;
+        }
+        return false;
+    }
 
     public void saveMessageInDatabase(String message, String publisherName) {
 

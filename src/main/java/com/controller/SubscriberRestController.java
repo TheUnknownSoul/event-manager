@@ -2,13 +2,11 @@ package com.controller;
 
 
 import com.model.Event;
+import com.model.User;
 import com.service.EventManagerService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,12 +26,12 @@ public class SubscriberRestController {
 
     @PostMapping("/delete")
     public void deleteSubscriber() { // need to change type of returned value
-        rabbitTemplate.destroy();
+
     }
 
-//    @GetMapping("/consumers")
-//    public List<User> showAllConsumers() {
-//        return eventManagerService.showAllConsumers();
-//    }
+    @GetMapping("/publishers")
+    public List<User> showAllPublishers() {
+        return eventManagerService.showAllPublishers();
+    }
 
 }
