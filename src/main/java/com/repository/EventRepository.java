@@ -3,10 +3,10 @@ package com.repository;
 import com.model.Event;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.Optional;
+import java.util.ArrayList;
 
-//public interface EventRepository  extends JpaRepository<Event, Integer> {
+
 public interface EventRepository  extends MongoRepository<Event, Integer> {
 
-    Optional<Event> findByEventId(Event event);
+    ArrayList<Event> findByPublisher(String publisher);
 }

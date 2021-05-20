@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.amqp.core.Message;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -15,15 +14,17 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document
+@Document(collection = "events")
 public class Event {
 
     @Id
-    private String eventId;
+    private String id;
     @Field(name = "date")
     private LocalDateTime dateTime;
     @Field(name = "category")
     private String category;
     @Field(name = "message")
-    private Message message;
+    private String message;
+    @Field(name = "publisher")
+    public String publisher;
 }

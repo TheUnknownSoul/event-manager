@@ -35,9 +35,16 @@ public class EventManagerRunner {
     public MongoTemplate mongoTemplate(MongoDatabaseFactory mongoDbFactory, MongoMappingContext context) {
 
         MappingMongoConverter converter = new MappingMongoConverter(new DefaultDbRefResolver(mongoDbFactory), context);
-        converter.setTypeMapper(new DefaultMongoTypeMapper(null));
-
+        converter.setTypeMapper(new DefaultMongoTypeMapper());
+//        converter.setTypeMapper(new DefaultMongoTypeMapper());
+//        converter.setCustomConversions(new CustomConversions(
+//                        new TimeZoneWriteConverter(),
+//                        new TimeZoneReadConverter()
+//
+//        ));
+        converter.afterPropertiesSet();
         return new MongoTemplate(mongoDbFactory, converter);
 
     }
+
 }

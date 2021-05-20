@@ -33,7 +33,7 @@ public class RabbitMQService  {
     @RabbitListener(queues = "${spring.rabbitmq.template.default-receive-queue}") // need to define queue
     public void receiveMessage(String message) {
         log.info("Received message '{}'", message);
-        System.out.println("Message " + message + " has been received" );
+
 
     }
 
@@ -41,14 +41,11 @@ public class RabbitMQService  {
     public void sendMessage(String message){
 
         rabbitTemplate.convertAndSend("event.#","event.manager.routingKey.default",message);
-        System.out.println("Message has been sent: " + message);
+        log.info("Message has been sent: " + message);
     }
 
     public void deleteMessage(){
     rabbitTemplate.destroy();
 
     }
-
-
 }
-
