@@ -1,6 +1,6 @@
 package com.controller;
 
-import com.model.NoSuchPublisherException;
+import com.exception.NoSuchPublisherException;
 import com.service.EventManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;

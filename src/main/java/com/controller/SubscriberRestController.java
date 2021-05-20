@@ -18,20 +18,20 @@ public class SubscriberRestController {
     @Autowired
     RabbitTemplate rabbitTemplate;
 
-    @PostMapping("/subscribe")
-    public List<Event> subscribe(@RequestParam("name") String publisherName) {
-       return eventManagerService.subscribe(publisherName);
-
-    }
+//    @PostMapping("/subscribe")
+//    public List<Event> subscribe(@RequestParam("name") String publisherName) {
+//       return eventManagerService.subscribe(publisherName);
+//
+//    }
 
     @PostMapping("/delete")
     public void deleteSubscriber() { // need to change type of returned value
 
     }
 
-    @GetMapping("/publishers")
-    public List<User> showAllPublishers() {
-        return eventManagerService.showAllPublishers();
-    }
+//    @GetMapping("/publishers")
+//    public List<User> showAllPublishers() {
+//        return eventManagerService.showAllPublishers();
+//    }
 
 }
