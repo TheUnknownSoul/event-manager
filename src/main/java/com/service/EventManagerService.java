@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
@@ -13,7 +15,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -30,51 +34,65 @@ public class EventManagerService {
     @Value("${spring.rabbitmq.template.exchange}")
     private String defaultExchange;
 
+    private int counter = 0;
+    Map<String, List<Queue>> publishersAndQueues = new HashMap<>();
+
     public void register(String name) {
         TopicExchange topicExchange = new TopicExchange(defaultExchange + name);
         amqpAdmin.declareExchange(topicExchange);
+        publishersAndQueues.put(name, null);
     }
 
-//    public List<Event> subscribe(String publisherName) {
-//        //need to create queue
-//        Optional<User> optionalUser = userRepository.findByName(publisherName);
-//        ArrayList<Event> optionalEvent = eventRepository.findByPublisher(publisherName);
-//        if (optionalUser.isPresent()) {
-//            if (!optionalEvent.isEmpty()) {
-//                return new ArrayList<>(optionalEvent);
-//            }
-//        }
-//        return null;
-//    }
-//
-//    public void receive() {
-//
-//    }
-//
-    public boolean sendPost(String message, String publisherName) {
-        TopicExchange topicExchange = new TopicExchange(defaultExchange + publisherName);
+    public boolean subscribe(String publisherName) {
         if (isPublisherExists(publisherName)) {
-            //list<queue> from rabbit(exchange) ; if queue exist send, else did`nt send
-            //check if queue
-
-//            List<String> strings = new ArrayList<>();
-//            strings.forEach(s -> //send);
-
-
-
+            Queue queue = new Queue(publisherName + "." + counter++);
+            amqpAdmin.declareQueue(queue);
+            String exchange = defaultExchange + publisherName;
+            Binding binding = new Binding(queue.getName(), Binding.DestinationType.QUEUE , exchange , exchange , null);
+            amqpAdmin.declareBinding(binding);
+            publishersAndQueues.computeIfAbsent(publisherName, k -> new ArrayList<>()).add(queue);
+            for (Map.Entry<String, List<Queue>> entry: publishersAndQueues.entrySet()){
+                log.info(entry.getKey() + " " + entry.getValue());
+            }
             return true;
         }
         return false;
     }
-//
-//
-//    public List<User> showAllPublishers() {
-//        return userRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
-//
-//    }
+
+    public List<Object> receive(String publisherName) {
+        List<Object> messages = new ArrayList<>();
+
+        for (int i = 0; i <publishersAndQueues.values().size();i++) {
+            for (Map.Entry<String,List<Queue>> entry: publishersAndQueues.entrySet()){
+                String routingKey = publisherName + "." + --counter;
+                    messages.add(rabbitTemplate.receiveAndConvert(routingKey));
+
+            }
+        }
+        return messages;
+    }
+
+    public boolean sendPost(String message, String publisherName) {
+        String exchange = defaultExchange + publisherName;
+
+        if (isPublisherExists(publisherName)) {
+            for (Map.Entry<String, List<Queue>> entry : publishersAndQueues.entrySet())
+                for (Queue ignored : entry.getValue()) {
+                    rabbitTemplate.convertAndSend(exchange, exchange, message);
+                }
+            return true;
+        }
+        return false;
+    }
+
+
+    public List<String> showAllPublishers() {
+        return new ArrayList<>(publishersAndQueues.keySet());
+
+    }
 
 
     public boolean isPublisherExists(String name) {
-        return !rabbitTemplate.nullSafeExchange(name).equals("");
+        return !rabbitTemplate.nullSafeExchange(name).equals("") && !(publishersAndQueues.size()==0);
     }
 }

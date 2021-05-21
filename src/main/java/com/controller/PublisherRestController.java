@@ -3,10 +3,7 @@ package com.controller;
 import com.exception.NoSuchPublisherException;
 import com.service.EventManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServlet;
 
@@ -14,28 +11,26 @@ import javax.servlet.http.HttpServlet;
 @RequestMapping("/publisher")
 public class PublisherRestController extends HttpServlet {
 
-//    @Autowired
-//    RabbitMQService rabbitMQService;
     @Autowired
     EventManagerService eventManagerService;
     private static final String SUCCESS_MESSAGE = "Message has been successfully  sent ";
+    private static final String REGISTRATION_SUCCESSFUL = "Registration has been success";
 
     @RequestMapping("/registration")
-    public void registerPublisher( String name) {
+    public String registerPublisher(@RequestParam(name = "name") String name) {
+
         eventManagerService.register(name);
+        return REGISTRATION_SUCCESSFUL;
     }
 
     @PostMapping("/{name}/send")
     public String sendPost( String message,@PathVariable String name) throws NoSuchPublisherException {
 
         if (eventManagerService.sendPost(message, name)){
-
             return SUCCESS_MESSAGE + "\" " +  message + "\"" + " in  " +  name;
         }
 
         throw new NoSuchPublisherException("No such publisher");
-
-
     }
 
 
