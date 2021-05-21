@@ -48,10 +48,10 @@ public class EventManagerService {
             Queue queue = new Queue(publisherName + "." + counter++);
             amqpAdmin.declareQueue(queue);
             String exchange = defaultExchange + publisherName;
-            Binding binding = new Binding(queue.getName(), Binding.DestinationType.QUEUE , exchange , exchange , null);
+            Binding binding = new Binding(queue.getName(), Binding.DestinationType.QUEUE, exchange, exchange, null);
             amqpAdmin.declareBinding(binding);
             publishersAndQueues.computeIfAbsent(publisherName, k -> new ArrayList<>()).add(queue);
-            for (Map.Entry<String, List<Queue>> entry: publishersAndQueues.entrySet()){
+            for (Map.Entry<String, List<Queue>> entry : publishersAndQueues.entrySet()) {
                 log.info(entry.getKey() + " " + entry.getValue());
             }
             return true;
@@ -62,10 +62,10 @@ public class EventManagerService {
     public List<Object> receive(String publisherName) {
         List<Object> messages = new ArrayList<>();
 
-        for (int i = 0; i <publishersAndQueues.values().size();i++) {
-            for (Map.Entry<String,List<Queue>> entry: publishersAndQueues.entrySet()){
+        for (int i = 0; i < publishersAndQueues.values().size(); i++) {
+            for (Map.Entry<String, List<Queue>> entry : publishersAndQueues.entrySet()) {
                 String routingKey = publisherName + "." + --counter;
-                    messages.add(rabbitTemplate.receiveAndConvert(routingKey));
+                messages.add(rabbitTemplate.receiveAndConvert(routingKey));
 
             }
         }
@@ -85,14 +85,17 @@ public class EventManagerService {
         return false;
     }
 
-
     public List<String> showAllPublishers() {
         return new ArrayList<>(publishersAndQueues.keySet());
 
     }
 
-
     public boolean isPublisherExists(String name) {
-        return !rabbitTemplate.nullSafeExchange(name).equals("") && !(publishersAndQueues.size()==0);
+        return !rabbitTemplate.nullSafeExchange(name).equals("") && !(publishersAndQueues.size() == 0);
+    }
+
+    public String deleteSubscriber(){
+
+        return "";
     }
 }

@@ -17,6 +17,7 @@ public class SubscriberRestController {
     RabbitTemplate rabbitTemplate;
     private static final String SUCCESS_SUBSCRIBE = "Subscribing has been successful";
     private static final String FAIL_SUBSCRIBE = "Subscribing has been failed";
+    private static final String DELETION_SUCCESS = "Deleting has been successful";
 
     @PostMapping("/subscribe")
     public String subscribe(@RequestParam("name") String publisherName) {
@@ -28,8 +29,9 @@ public class SubscriberRestController {
     }
 
     @PostMapping("/delete")
-    public void deleteSubscriber() { // need to change type of returned value
-
+    public String deleteSubscriber() { // need to change type of returned value
+    eventManagerService.deleteSubscriber();
+    return DELETION_SUCCESS;
     }
 
     @GetMapping("/publishers")
@@ -38,8 +40,8 @@ public class SubscriberRestController {
     }
 
     @GetMapping("/{name}/receive")
-    public List<Object> receive(@PathVariable String name){
-       return eventManagerService.receive(name);
+    public List<Object> receive(@PathVariable String name) {
+        return eventManagerService.receive(name);
 
     }
 }

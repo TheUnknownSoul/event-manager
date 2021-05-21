@@ -24,10 +24,10 @@ public class PublisherRestController extends HttpServlet {
     }
 
     @PostMapping("/{name}/send")
-    public String sendPost( String message,@PathVariable String name) throws NoSuchPublisherException {
+    public String sendPost(String message, @PathVariable String name) throws NoSuchPublisherException {
 
-        if (eventManagerService.sendPost(message, name)){
-            return SUCCESS_MESSAGE + "\" " +  message + "\"" + " in  " +  name;
+        if (eventManagerService.sendPost(message, name)) {
+            return SUCCESS_MESSAGE + "\" " + message + "\"" + " in  " + name;
         }
 
         throw new NoSuchPublisherException("No such publisher");
