@@ -15,23 +15,16 @@ public class SubscriberRestController {
     EventManagerService eventManagerService;
     @Autowired
     RabbitTemplate rabbitTemplate;
-    private static final String SUCCESS_SUBSCRIBE = "Subscribing has been successful";
-    private static final String FAIL_SUBSCRIBE = "Subscribing has been failed";
-    private static final String DELETION_SUCCESS = "Deleting has been successful";
+
 
     @PostMapping("/subscribe")
-    public String subscribe(@RequestParam("name") String publisherName) {
-        if (eventManagerService.subscribe(publisherName)) {
-            return SUCCESS_SUBSCRIBE;
-        }
-        return FAIL_SUBSCRIBE;
-
+    public String subscribe(@RequestParam("appId") String appId, @RequestParam ("subscriberName") String subscriberName) {
+        return eventManagerService.subscribe(appId, subscriberName);
     }
 
     @PostMapping("/delete")
-    public String deleteSubscriber() { // need to change type of returned value
-    eventManagerService.deleteSubscriber();
-    return DELETION_SUCCESS;
+    public String deleteSubscriber(@RequestParam ("subscriberId") String subscriberId) {
+        return eventManagerService.deleteSubscriber(subscriberId);
     }
 
     @GetMapping("/publishers")

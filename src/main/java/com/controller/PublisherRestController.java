@@ -13,25 +13,15 @@ public class PublisherRestController extends HttpServlet {
 
     @Autowired
     EventManagerService eventManagerService;
-    private static final String SUCCESS_MESSAGE = "Message has been successfully  sent ";
-    private static final String REGISTRATION_SUCCESSFUL = "Registration has been success";
 
     @RequestMapping("/registration")
     public String registerPublisher(@RequestParam(name = "name") String name) {
-
-        eventManagerService.register(name);
-        return REGISTRATION_SUCCESSFUL;
+        return eventManagerService.register(name);
     }
 
     @PostMapping("/{name}/send")
-    public String sendPost(String message, @PathVariable String name) throws NoSuchPublisherException {
-
-        if (eventManagerService.sendPost(message, name)) {
-            return SUCCESS_MESSAGE + "\" " + message + "\"" + " in  " + name;
-        }
-
-        throw new NoSuchPublisherException("No such publisher");
+    public String sendPost(@RequestParam("message") String message, @PathVariable String name) throws NoSuchPublisherException {
+        return eventManagerService.sendPost(message, name);
     }
-
 
 }
