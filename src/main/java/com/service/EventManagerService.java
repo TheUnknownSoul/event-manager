@@ -34,7 +34,7 @@ public class EventManagerService {
     private static final String SUCCESS_SUBSCRIBE = "Subscribing has been successful";
     private static final String FAIL_SUBSCRIBE = "Subscribing has been failed";
     private static final String DELETION_SUCCESS = "Deleting has been successful";
-    private static final String DELETION_FAIL = "Deleting has been failed";
+    private static final String DELETION_FAIL = "Deleting has been failed.No such subscriber";
 
     @Autowired
     AmqpAdmin amqpAdmin;
