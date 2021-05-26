@@ -9,8 +9,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 @Slf4j
 @SpringBootApplication(exclude ={DataSourceAutoConfiguration.class } )
 public class EventManagerRunner {
-
-
     public static void main(String... args) {
         log.info("Application starts");
         SpringApplication.run(EventManagerRunner.class);
