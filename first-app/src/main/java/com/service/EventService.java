@@ -1,5 +1,6 @@
 package com.service;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -10,7 +11,7 @@ public interface EventService {
 
     void subscribe(String consumerId, String publisherId);
 
-    void send(String message, String publisherId) throws UnsupportedEncodingException;
+    void send(String message, String publisherId) throws IOException;
 
     List<Object> receive(String consumerId);
 

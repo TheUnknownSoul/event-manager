@@ -4,8 +4,6 @@ import com.service.EventServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -26,23 +24,22 @@ public class EventController {
     }
 
     @PostMapping("{name}/send")
-    public void send(@RequestParam("message") String message, @PathVariable("name")String name){
-        service.send(message,name);
+    public void send(@RequestParam("message") String message, @PathVariable("name") String name) {
+        service.send(message, name);
     }
 
-    @GetMapping("/receive")
-    public List<Object> receive(@RequestParam String consumerId) {
-        return service.receive(consumerId);
+    @GetMapping("/{name}/receive")
+    public List<Object> receive(@PathVariable String name) {
+        return service.receive(name);
     }
 
     @PostMapping("/delete")
-    public void deleteSubscriber(@RequestParam ("subscriberId") String subscriberId) throws URISyntaxException {
-         service.deleteSubscriber(subscriberId);
+    public void deleteSubscriber(@RequestParam("subscriberId") String subscriberId) throws URISyntaxException {
+        service.deleteSubscriber(subscriberId);
     }
 
     @GetMapping("/publishers")
     public List<String> showAllPublishers() throws URISyntaxException {
         return service.showAllPublishers();
     }
-
 }
