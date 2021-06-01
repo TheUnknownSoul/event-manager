@@ -7,7 +7,7 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class RestTemplateConfig {
 
-    @Bean(name = "rest-template-config")
+    @Bean(name = "event-manager-rest-template")
     RestTemplate restTemplate(){
         return new RestTemplate();
     }

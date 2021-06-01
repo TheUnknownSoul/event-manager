@@ -23,13 +23,13 @@ public class EventController {
         service.subscribe(appId, subscriberName);
     }
 
-    @PostMapping("{name}/send")
-    public void send(@RequestParam("message") String message, @PathVariable("name") String name) {
+    @PostMapping("/send")
+    public void send(@RequestParam("message") String message, @RequestParam("name") String name) {
         service.send(message, name);
     }
 
-    @GetMapping("/{name}/receive")
-    public List<Object> receive(@PathVariable String name) {
+    @GetMapping("/receive")
+    public List<Object> receive(@RequestParam String name) {
         return service.receive(name);
     }
 

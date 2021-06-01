@@ -3,7 +3,6 @@ package com.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -18,33 +17,41 @@ import java.util.List;
 @Slf4j
 @Service
 public class EventServiceImpl implements EventService {
-    @Qualifier("rest-template-config")
+
+    private static final String HOST = "http://localhost:8080/";
+    private static final String REGISTRATION_URL = HOST + "publisher/registration?name=%s";
+    private static final String SUBSCRIBE_URL = HOST + "subscriber/subscribe?appId=%s&subscriberName=%s";
+    private static final String SEND_URL = HOST + "publisher/%s/send?message=%s";
+    private static final String RECEIVE_URL = HOST + "subscriber/%s/receive";
+    private static final String DELETE_URL = HOST + "subscriber/delete?subscriberId=%s";
+    private static final String PUBLISHERS_URL = HOST + "subscriber/publishers";
+
+    @Qualifier("event-manager-rest-template")
     @Autowired
     RestTemplate restTemplate;
-    @Value("${app.a.host}")
-    private String host;
+
 
     @Override
     public void registration(String name) {
-        String subscribe_url = host + "/publisher/registration?name={name}";
-        restTemplate.postForEntity(subscribe_url, null, null, name);
+        String registration_url = String.format(REGISTRATION_URL, name);
+        restTemplate.postForEntity(registration_url, null, null, name);
     }
 
     @Override
     public void subscribe(String appId, String subscriberName) {
-        String subscribe_url = host + "subscriber/subscribe?appId={appId}&subscriberName={subscriberName}";
+        String subscribe_url = String.format(SUBSCRIBE_URL, appId, subscriberName);
         restTemplate.postForEntity(subscribe_url, null, null, appId, subscriberName);
     }
 
     @Override
     public void send(String message, String name) {
-        String send_url = host + "publisher/" + name + "/send?message=" + message;
+        String send_url = String.format(SEND_URL, name, message);
         restTemplate.postForEntity(send_url, HttpMethod.POST, null, message, name);
     }
 
     @Override
     public List<Object> receive(String name) {
-        String receiveUrl = host + "subscriber/" + name + "/receive";
+        String receiveUrl = String.format(RECEIVE_URL, name);
         ResponseEntity<List<Object>> response = restTemplate.exchange(receiveUrl,
                 HttpMethod.GET, null, new ParameterizedTypeReference<List<Object>>() {
                 },
@@ -54,13 +61,13 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void deleteSubscriber(String name) throws URISyntaxException {
-        URI deleteSubscriberUri = new URI(host + "/subscriber/delete?subscriberId=" + name);
+        URI deleteSubscriberUri = new URI(String.format(DELETE_URL, name));
         restTemplate.postForEntity(deleteSubscriberUri, name, null);
     }
 
     @Override
     public List<String> showAllPublishers() throws URISyntaxException {
-        URI publishersUri = new URI(host + "subscriber/publishers");
+        URI publishersUri = new URI(PUBLISHERS_URL);
         List<String> publishers = new ArrayList<>();
         publishers.add(restTemplate.getForObject(publishersUri, String.class));
         return publishers;
