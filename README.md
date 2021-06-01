@@ -30,7 +30,7 @@ Subscriber can view list of all publishers on endpoint:
 and subscribe to favourite. To subscribe just call endpoint: 
 `http://localhost:8080/subscriber/subscribe?appId={name of your app}&subscriberName={your name as subscriber}`.
 After that, queue for subscribed will be created. Receiving messages will be able on
-`http://localhost:8080/subscriber/{appId}/receive` endpoint.
+`http://localhost:8080/subscriber/receive?name` endpoint.
 
 ### How to get it
 1.Download and install RabbitMQ from https://www.rabbitmq.com/download.html the version for your OS;
